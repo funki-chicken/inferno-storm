@@ -33,56 +33,71 @@ export const Storm = class extends Component {
                 baseSet: false,
                 namespace: sys_namespace + this.props.namespace + ':'
             },
-            typeof this.props.loadersOnly != 'undefined' ?
-                {
-                    loaders: this.props.loadersOnly,
-                    addProps: () => ({}),
-                    transitions: {},
-                    background: () => null
-                }
-                :
-                this.props.spec(initSetScope(sys_namespace + this.props.namespace + ':', this.props.setStore, this.props.store)))
+            this.props.spec(
+                initSetScope(
+                    sys_namespace + this.props.namespace + ':', this.props.setStore, this.props.store)
+                )
+            )
     }
-    componentWillUnmount() {
-        
-        // const loaders = this.state.loaders(this.state.api, this.props.params || {});
-        //
-        // //garbage collect unused storm props
-        // this.props.setStore(
-        //     nullifyKeys(
-        //         composeStoreState(loaders, this.state.namespace, this.state.addProps(this.state.api), this.state.transitions)
-        //     )
-        // )
-    }
-    componentDidMount() {
-        const loaders = this.state.loaders(this.state.api, this.props.params);
-        const _this = this;
-        if (loaders.length === 0) {
-            this.setState({baseSet: true})
-            return
-        }
-        this.props.setStore(
-            composeStoreState(loaders, this.state.namespace, this.state.addProps(this.state.api), this.state.transitions),
-            () => this.setState({ baseSet: true },
-                () => {
+    _composeScopedState() {
+        return new Promise((resolve, reject) => {
+            const loaders = this.state.loaders(this.state.api, this.props.params)
+            this.props.setStore(
+                composeStoreState(
+                    loaders, 
+                    this.state.namespace, 
+                    this.state.addProps(this.state.api), 
+                    this.state.transitions
+                ),
+                () => this.setState({ baseSet: true }, () => {
                     if (typeof this.props.onInitialRender === 'function') {
                         this.props.onInitialRender(this.props.store)
                     }
-                    loaders.forEach(
-                        ([loadKeys, { fetcher, bases }]) => {
-                            this.loadDataAtKey(
-                                fetcher, 
-                                loadKeys, 
-                                loadKeys.map(loadKey => this.state.namespace + loadKey), 
-                                () => BackgroundStorms(this.props.namespace, this.state.background, _this, this.props.store)
-                            )
-                        }
+                    resolve()
+                })
+            )
+        })
+    }
+    _runLoaders() {
+        return new Promise((resolve, reject) => {
+            const loaders = this.state.loaders(this.state.api, this.props.params)
+            loaders.forEach(
+                ([loadKeys, { fetcher, bases }]) => {
+                    this._loadDataAtKey(
+                        fetcher, 
+                        loadKeys, 
+                        loadKeys.map(loadKey => this.state.namespace + loadKey), 
+                        () => resolve()
                     )
                 }
             )
-        )
+        })
     }
-    loadDataAtKey(fetcher, load_keys, scoped_keys, cb) {
+    _startBackgroundScripts() {
+        const _this = this;
+        BackgroundStorms(this.props.namespace, this.state.scripts, _this, this.props.store)
+    }
+    componentDidMount() {
+        this._composeScopedState()
+            .then(() => this._runLoaders())
+            .then(() => this._startBackgroundScripts())
+            .catch(err => console.log(err))
+    }
+    render() {
+        console.log(this.state);
+        if (this.state.baseSet) {
+            return this.renderReactiveChild(
+                exposedNamespacedProps(this.props.store, this.state.namespace)
+            )
+        } else {
+            return <div style={{display: "none"}}/>
+        }
+    }
+    renderReactiveChild(scopeStore) {
+        return createElement(this.props.children, scopeStore)
+    }
+    
+    _loadDataAtKey(fetcher, load_keys, scoped_keys, cb) {
         if (typeof fetcher === 'function') {
             fetcher()
                 .then(data => scoped_keys.length === 1 ?
@@ -98,18 +113,6 @@ export const Storm = class extends Component {
                 )
                 .catch(err => this.props.onError(scoped_keys, err))
         }
-    }
-    render() {
-        if (this.state.baseSet) {
-            return this.renderReactiveChild(
-                exposedNamespacedProps(this.props.store, this.state.namespace)
-            )
-        } else {
-            return <div style={{display: "none"}}/>
-        }
-    }
-    renderReactiveChild(scopeStore) {
-        return createElement(this.props.children, scopeStore)
     }
 };
 

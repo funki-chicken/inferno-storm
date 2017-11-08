@@ -24,5 +24,5 @@ export default (setScope) => ({
             })
         )
     },
-    background: [weather_patterns]
+    scripts: [weather_patterns]
 });

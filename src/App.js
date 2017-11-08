@@ -35,6 +35,7 @@ export default class extends Component {
                 onInitialRender={() => this.environment()}
                 onError={(field, error) => console.log("ERROR: ", field, error)}>
                 {(store) => {
+                    console.log(store);
                     //grab your state transitions from within storms/app-base/spec.js
                     const { heat_wave } = this.state.storm_transitions('app_base');
                     return(
