@@ -35,9 +35,10 @@ export const Storm = class extends Component {
             },
             this.props.spec(
                 initSetScope(
-                    sys_namespace + this.props.namespace + ':', this.props.setStore, this.props.store)
+                    sys_namespace + this.props.namespace + ':', this.props.setStore, this.props.store
                 )
             )
+        )
     }
     _composeScopedState() {
         return new Promise((resolve, reject) => {
@@ -49,12 +50,15 @@ export const Storm = class extends Component {
                     this.state.addProps(this.state.api), 
                     this.state.transitions
                 ),
-                () => this.setState({ baseSet: true }, () => {
+                () => {
+                    this.setState({
+                        baseSet: true
+                    })
                     if (typeof this.props.onInitialRender === 'function') {
                         this.props.onInitialRender(this.props.store)
                     }
                     resolve()
-                })
+                }
             )
         })
     }
@@ -84,7 +88,6 @@ export const Storm = class extends Component {
             .catch(err => console.log(err))
     }
     render() {
-        console.log(this.state);
         if (this.state.baseSet) {
             return this.renderReactiveChild(
                 exposedNamespacedProps(this.props.store, this.state.namespace)
