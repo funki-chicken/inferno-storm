@@ -12,17 +12,17 @@ export const InitStorm = (setStore, getStore) => new Promise((resolve, reject) =
             return typeof store[ns] === 'undefined' ? {} : store[ns]
         },
         expose_storm: (stormName) => exposedNamespacedProps(getStore(), sys_namespace + stormName + ':')
-    }, () => resolve())
-})
+    }, () => resolve());
+});
 
-export const BackgroundStorms = (namespace, scripts, context, store) => {
+const BackgroundStorms = (namespace, scripts, context, store) => {
     context.componentWillUpdate = (nextProps, nextState) => {
         store = nextProps.store;
     };
     const getStore = () => store.expose_storm(namespace, store);
     const transitions = store.storm_transitions(namespace);
-    scripts.forEach(script => script(transitions, () => getStore(), context))
-} 
+    scripts.forEach(script => script(transitions, () => getStore(), context));
+}; 
 
 export const Storm = class extends Component {
     constructor(props) {
