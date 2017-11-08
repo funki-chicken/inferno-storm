@@ -40,8 +40,12 @@ export const Storm = class extends Component {
             )
         )
     }
+    _setState(obj) {
+        return new Promise((resolve, reject) => this.setState(obj, () => resolve()))
+    }
     componentDidMount() {
         this._composeScopedState()
+            .then(() => this._setState({ baseSet: true }))
             .then(() => this._runLoaders())
             .then(() => this._startBackgroundScripts())
             .catch(err => console.log(err))
@@ -69,9 +73,6 @@ export const Storm = class extends Component {
                     this.state.transitions
                 ),
                 () => {
-                    this.setState({
-                        baseSet: true
-                    })
                     if (typeof this.props.onInitialRender === 'function') {
                         this.props.onInitialRender(this.props.store)
                     }
