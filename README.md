@@ -2,6 +2,8 @@ This is starter/helper base built on top of  [Create Inferno App](https://github
 
 Getting Started: 
 ```
+git clone https://github.com/funki-chicken/inferno-storm
+cd inferno-storm
 npm run i 
 npm run start 
 ```
