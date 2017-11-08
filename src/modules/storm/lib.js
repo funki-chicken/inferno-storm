@@ -127,15 +127,10 @@ const exposedNamespacedProps = (store, namespace) => {
     }, {})
 };
 
-const nullifyKeys = (obj) => Object.keys(obj).reduce((accum, key, i, array) => {
-    accum[key] = null;
-    return accum
-}, {});
-
 const composeStoreState = (loaders, namespace, additionalProps, transitions) => Object.assign(
     {},
     //helper props
-    padKeys(namespace, additionalProps),
+    _padKeys(namespace, additionalProps),
     //hacky persistence for transition functions
     { [namespace +'transitions']: transitions },
     //base case for each loader field
@@ -147,7 +142,7 @@ const composeStoreState = (loaders, namespace, additionalProps, transitions) => 
 const initSetScope = (namespace, setState, store) => {
     return (transition, cb) => {
         setState(
-            (state) => padKeys(
+            (state) => _padKeys(
                 namespace,
                 transition(
                     extractByNamespace(namespace, state)
@@ -166,4 +161,4 @@ const extractByNamespace = (namespace, state) => Object.keys(state).reduce((accu
     return accum
 }, {});
 
-const padKeys = (pad, obj) => Object.keys(obj).reduce((accum, val, i, array) => Object.assign({}, accum, {[pad + val]: obj[val]}), {});
+const _padKeys = (pad, obj) => Object.keys(obj).reduce((accum, val, i, array) => Object.assign({}, accum, {[pad + val]: obj[val]}), {});
