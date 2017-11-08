@@ -1,5 +1,5 @@
 export default (transitions, getStore, storm) => {
-    //what's storm? just a ref to our store's parent component. aka the 'this' in this.state
+    //storm => ref to Component context
     storm.componentWillUnmount = () => {
         //destroy any lingering setIntervals when this storm unmounts.
         //or leave it running. you do you
