@@ -4,17 +4,18 @@ import createElement from 'inferno-create-element';
 
 const sys_namespace = 'storm:';
 
-export const InitStorm = (setStore) => {
+export const InitStorm = (setStore, getStore) => new Promise((resolve, reject) => {
     setStore({
-        storm_transitions: (stormName, store) => {
+        storm_transitions: (stormName) => {
+            const store = getStore();
             const ns = sys_namespace + stormName + ':transitions';
             return typeof store[ns] === 'undefined' ? {} : store[ns]
         },
-        expose_storm: (stormName, store) => exposedNamespacedProps(store, sys_namespace + stormName + ':')
-    })
-};
+        expose_storm: (stormName) => exposedNamespacedProps(getStore(), sys_namespace + stormName + ':')
+    }, () => resolve())
+})
 export const stormBackground = (context) => (userspace, store, getStore, scripts) => {
-    const transitions = store.storm_transitions(userspace, store);
+    const transitions = store.storm_transitions(userspace);
     scripts.forEach(script => script(transitions, () => getStore(userspace), context))
 } 
 export const Storm = class extends Component {

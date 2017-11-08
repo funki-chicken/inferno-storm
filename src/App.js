@@ -6,15 +6,23 @@ import app_base_spec from './storms/app-base/spec.js';
 export default class extends Component {
     constructor(props) {
         super(props);
+        this.state = {
+            ready: false
+        }
     }
     environment() {
         //Maybe do some stuff specific to the browser environment, set listeners, etc
     }
     componentDidMount() {
         const setState = this.setState.bind(this);
-        InitStorm(setState)
+        InitStorm(setState, () => this.state)
+            .then(() => this.setState({ ready: true }))
+            .catch(err => console.log(err))
     }
     render() {
+        if (!this.state.ready) {
+            return null
+        }
         const state = this.state;
         const setState = this.setState.bind(this);
         return (
@@ -27,12 +35,17 @@ export default class extends Component {
                 onInitialRender={() => this.environment()}
                 onError={(field, error) => console.log("ERROR: ", field, error)}>
                 {(store) => {
-                    //hey! try logging this store variable!
+                    //grab your state transitions from within storms/app-base/spec.js
+                    const { heat_wave } = this.state.storm_transitions('app_base');
                     return(
                         <p style={{ margin: 20 }}>
                             {'No more spaghetti state! The following are the props contained in the storm under the namespace, "app_base", in src/App.js:'}
                             <br />
-                            {Object.keys(store).map(key => [key, store[key]]).join(', ')}
+                            <br />
+                            <button style={{ margin: 0, backgroundColor: "#f44336", borderWidth: 0 }} onClick={() => heat_wave()}>Start a heat wave, baby!</button>
+                            <br />
+                            <br />
+                            {JSON.stringify(store, null, 2)}
                             <br />
                             <br />
                             {"In lue of more official docs, given the simplicity of the code, I suggest starting with App.js, then jumping into storms/app-base.js"}

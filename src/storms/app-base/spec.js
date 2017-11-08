@@ -20,7 +20,7 @@ export default (setScope) => ({
     transitions: {
         'heat_wave': () => setScope(
             (state) => ({
-                temperature: state.temperature + 20
+                temperature: state.temperature + 1
             })
         )
     },
