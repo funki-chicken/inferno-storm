@@ -1,4 +1,4 @@
-import app_base from './background/entry.js';
+import weather_patterns from './background/weather-patterns.js';
 
 export default (setScope) => ({
     api: {
@@ -24,5 +24,5 @@ export default (setScope) => ({
             })
         )
     },
-    background: app_base
+    background: [weather_patterns]
 });

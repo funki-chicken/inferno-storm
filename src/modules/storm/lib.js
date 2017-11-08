@@ -14,10 +14,16 @@ export const InitStorm = (setStore, getStore) => new Promise((resolve, reject) =
         expose_storm: (stormName) => exposedNamespacedProps(getStore(), sys_namespace + stormName + ':')
     }, () => resolve())
 })
-export const stormBackground = (context) => (userspace, store, getStore, scripts) => {
-    const transitions = store.storm_transitions(userspace);
-    scripts.forEach(script => script(transitions, () => getStore(userspace), context))
+
+export const BackgroundStorms = (namespace, scripts, context, store) => {
+    context.componentWillUpdate = (nextProps, nextState) => {
+        store = nextProps.store;
+    };
+    const getStore = () => store.expose_storm(namespace, store);
+    const transitions = store.storm_transitions(namespace);
+    scripts.forEach(script => script(transitions, () => getStore(), context))
 } 
+
 export const Storm = class extends Component {
     constructor(props) {
         super(props);
@@ -68,7 +74,7 @@ export const Storm = class extends Component {
                                 fetcher, 
                                 loadKeys, 
                                 loadKeys.map(loadKey => this.state.namespace + loadKey), 
-                                () => this.state.background(stormBackground(_this), { context: _this, store: this.props.store })
+                                () => BackgroundStorms(this.props.namespace, this.state.background, _this, this.props.store)
                             )
                         }
                     )
