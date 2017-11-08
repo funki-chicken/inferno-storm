@@ -9,3 +9,6 @@ npm run start
 ```
 
 And finally, open http://localhost:3000
+
+There's more info when you open the running app the browser. 
+If this is code that seems useful to others, I will work on a more comprehensive readme.
