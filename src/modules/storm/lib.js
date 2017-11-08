@@ -40,6 +40,24 @@ export const Storm = class extends Component {
             )
         )
     }
+    componentDidMount() {
+        this._composeScopedState()
+            .then(() => this._runLoaders())
+            .then(() => this._startBackgroundScripts())
+            .catch(err => console.log(err))
+    }
+    render() {
+        if (this.state.baseSet) {
+            return this.renderWithProps(
+                exposedNamespacedProps(this.props.store, this.state.namespace)
+            )
+        } else {
+            return <div style={{display: "none"}}/>
+        }
+    }
+    renderWithProps(scopeStore) {
+        return createElement(this.props.children, scopeStore)
+    }
     _composeScopedState() {
         return new Promise((resolve, reject) => {
             const loaders = this.state.loaders(this.state.api, this.props.params)
@@ -81,25 +99,6 @@ export const Storm = class extends Component {
         const _this = this;
         BackgroundStorms(this.props.namespace, this.state.scripts, _this, this.props.store)
     }
-    componentDidMount() {
-        this._composeScopedState()
-            .then(() => this._runLoaders())
-            .then(() => this._startBackgroundScripts())
-            .catch(err => console.log(err))
-    }
-    render() {
-        if (this.state.baseSet) {
-            return this.renderReactiveChild(
-                exposedNamespacedProps(this.props.store, this.state.namespace)
-            )
-        } else {
-            return <div style={{display: "none"}}/>
-        }
-    }
-    renderReactiveChild(scopeStore) {
-        return createElement(this.props.children, scopeStore)
-    }
-    
     _loadDataAtKey(fetcher, load_keys, scoped_keys, cb) {
         if (typeof fetcher === 'function') {
             fetcher()
