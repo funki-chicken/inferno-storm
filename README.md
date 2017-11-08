@@ -4,7 +4,7 @@ Getting Started:
 ```
 git clone https://github.com/funki-chicken/inferno-storm
 cd inferno-storm
-npm run i 
+npm i 
 npm run start 
 ```
 
