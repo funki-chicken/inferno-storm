@@ -49,7 +49,7 @@ export default class extends Component {
                             {JSON.stringify(store, null, 2)}
                             <br />
                             <br />
-                            {"In lue of more official docs, given the simplicity of the code, I suggest starting with App.js, then jumping into storms/app-base.js"}
+                            {"In lue of more official docs, given the simplicity of the code, I suggest starting with App.js, then jumping into storms/app-base/spec.js"}
                             <br />
                             {"This file should give you the information needed to create a decent mental model of what is happening."}
                             <br />
