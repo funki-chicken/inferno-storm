@@ -15,6 +15,10 @@ export default class extends Component {
     }
     componentDidMount() {
         const setState = this.setState.bind(this);
+        
+        //ONLY RUN ONCE!
+        //if we call <Storm ...props/> in another component, we don't need to call InitStorm there as well. 
+        //All we have to do is match the props I use in <Storm ...props/> below
         InitStorm(setState, () => this.state)
             .then(() => this.setState({ ready: true }))
             .catch(err => console.log(err))
