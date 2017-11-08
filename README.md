@@ -1,4 +1,4 @@
-This is starter/helper base built on top of  [Create Inferno App](https://github.com/infernojs/create-inferno-app).
+This is a starter/helper base built on top of  [Create Inferno App](https://github.com/infernojs/create-inferno-app).
 
 Getting Started: 
 ```
