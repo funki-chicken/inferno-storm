@@ -132,15 +132,13 @@ const RunStorm = class extends Component {
     }
     render() {
         if (this.state.baseSet) {
-            return this.renderWithProps(
+            return createElement(
+                this.props.children,
                 exposedNamespacedProps(this.state.namespace)
             )
         } else {
             return <div style={{display: "none"}}/>
         }
-    }
-    renderWithProps(scopeStore) {
-        return createElement(this.props.children, scopeStore)
     }
     _composeScopedState() {
         return new Promise((resolve, reject) => {
