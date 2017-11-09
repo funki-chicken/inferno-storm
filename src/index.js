@@ -1,4 +1,4 @@
 import { render } from 'inferno';
-import App from './App';
+import { Routes } from './UI-Routes.js';
 
-render(<App />, document.getElementById('app'));
+render(<Routes />, document.getElementById('app'));

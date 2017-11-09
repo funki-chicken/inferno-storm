@@ -132,10 +132,7 @@ const RunStorm = class extends Component {
     }
     render() {
         if (this.state.baseSet) {
-            return createElement(
-                this.props.children,
-                exposedNamespacedProps(this.state.namespace)
-            )
+            return this.props.children(exposedNamespacedProps(this.state.namespace))
         } else {
             return <div style={{display: "none"}}/>
         }
