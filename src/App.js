@@ -19,11 +19,12 @@ export default class extends Component {
         const setState = this.setState.bind(this);
         return (
             <Storm
-                namespace='app_base' //required
-                spec={app_base_spec} //required 
-                params={{}}
-                onInitialRender={() => this.environment()}
-                onError={(field, error) => console.log("ERROR: ", field, error)}>
+                namespace='app_base' //required: must be unique
+                spec={app_base_spec} //required
+                params={{}}          //optional
+                onError={(field, error) => console.log("ERROR: ", field, error)} //required
+                onInitialRender={() => this.environment()} //optional
+                >
                 {(store) => {
                     console.log('Yo spec is working: ', store);
                     const {
