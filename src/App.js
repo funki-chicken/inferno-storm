@@ -6,42 +6,32 @@ import app_base_spec from './storms/app-base/spec.js';
 export default class extends Component {
     constructor(props) {
         super(props);
-        this.state = {
-            ready: false
-        }
     }
     environment() {
         //Maybe do some stuff specific to the browser environment, set listeners, etc
     }
     componentDidMount() {
-        const setState = this.setState.bind(this);
-        
-        //ONLY RUN ONCE!
-        //if we call <Storm ...props/> in another component, we don't need to call InitStorm there as well. 
-        //All we have to do is match the props I use in <Storm ...props/> below
-        InitStorm(setState, () => this.state)
-            .then(() => this.setState({ ready: true }))
-            .catch(err => console.log(err))
+        const _this = this;
+        InitStorm(_this);
     }
     render() {
-        if (!this.state.ready) {
-            return null
-        }
         const state = this.state;
         const setState = this.setState.bind(this);
         return (
             <Storm
-                namespace='app_base'
-                spec={app_base_spec}
-                store={state}
+                namespace='app_base' //required
+                spec={app_base_spec} //required 
                 params={{}}
-                setStore={setState}
                 onInitialRender={() => this.environment()}
                 onError={(field, error) => console.log("ERROR: ", field, error)}>
                 {(store) => {
-                    console.log(store);
-                    //grab your state transitions from within storms/app-base/spec.js
-                    const { heat_wave } = this.state.storm_transitions('app_base');
+                    console.log('Yo spec is working: ', store);
+                    const {
+                        temperature
+                    } = store;
+                    const { 
+                        heat_wave 
+                    } = this.state.storm_transitions('app_base');
                     return(
                         <p style={{ margin: 20 }}>
                             {'No more spaghetti state! The following are the props contained in the storm under the namespace, "app_base", in src/App.js:'}
